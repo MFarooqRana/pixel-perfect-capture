@@ -14,16 +14,278 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ballots: {
+        Row: {
+          candidate_id: string
+          created_at: string
+          election_id: string
+          id: string
+        }
+        Insert: {
+          candidate_id: string
+          created_at?: string
+          election_id: string
+          id?: string
+        }
+        Update: {
+          candidate_id?: string
+          created_at?: string
+          election_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ballots_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ballots_election_id_fkey"
+            columns: ["election_id"]
+            isOneToOne: false
+            referencedRelation: "elections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      candidates: {
+        Row: {
+          created_at: string
+          department: string
+          election_id: string
+          full_name: string
+          id: string
+          manifesto: string
+          photo_url: string | null
+          position: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          department?: string
+          election_id: string
+          full_name: string
+          id?: string
+          manifesto?: string
+          photo_url?: string | null
+          position?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          department?: string
+          election_id?: string
+          full_name?: string
+          id?: string
+          manifesto?: string
+          photo_url?: string | null
+          position?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidates_election_id_fkey"
+            columns: ["election_id"]
+            isOneToOne: false
+            referencedRelation: "elections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      elections: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string
+          end_at: string
+          id: string
+          position: string
+          results_published: boolean
+          start_at: string
+          status: Database["public"]["Enums"]["election_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          end_at: string
+          id?: string
+          position?: string
+          results_published?: boolean
+          start_at: string
+          status?: Database["public"]["Enums"]["election_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          end_at?: string
+          id?: string
+          position?: string
+          results_published?: boolean
+          start_at?: string
+          status?: Database["public"]["Enums"]["election_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      eligible_voters: {
+        Row: {
+          added_by: string | null
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          added_by?: string | null
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          added_by?: string | null
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "eligible_voters_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name: string
+          id: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vote_receipts: {
+        Row: {
+          created_at: string
+          election_id: string
+          id: string
+          voter_id: string
+        }
+        Insert: {
+          created_at?: string
+          election_id: string
+          id?: string
+          voter_id: string
+        }
+        Update: {
+          created_at?: string
+          election_id?: string
+          id?: string
+          voter_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vote_receipts_election_id_fkey"
+            columns: ["election_id"]
+            isOneToOne: false
+            referencedRelation: "elections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vote_receipts_voter_id_fkey"
+            columns: ["voter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      admin_stats: {
+        Args: never
+        Returns: {
+          election_id: string
+          eligible: number
+          votes_cast: number
+        }[]
+      }
+      cast_vote: {
+        Args: { _candidate_id: string; _election_id: string }
+        Returns: undefined
+      }
+      get_results: {
+        Args: { _election_id: string }
+        Returns: {
+          candidate_id: string
+          department: string
+          full_name: string
+          votes: number
+        }[]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "student"
+      election_status: "draft" | "open" | "closed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +412,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "student"],
+      election_status: ["draft", "open", "closed"],
+    },
   },
 } as const
