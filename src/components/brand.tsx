@@ -10,7 +10,7 @@ export function Logo({ className }: { className?: string }) {
       <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand-gradient text-primary-foreground shadow-card">
         <Vote className="h-5 w-5" />
       </span>
-      Campus<span className="text-violet">Vote</span>
+      <span>Campus<span className="text-violet">Vote</span></span>
     </Link>
   );
 }
