@@ -10,7 +10,7 @@ import { Logo } from "@/components/brand";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (s: Record<string, unknown>) => ({ mode: s.mode === "signup" ? ("signup" as const) : undefined }),
+  validateSearch: (s: Record<string, unknown>): { mode?: "signup" } => (s["mode"] === "signup" ? { mode: "signup" } : {}),
   head: () => ({
     meta: [
       { title: "Sign in — CampusVote" },
@@ -36,7 +36,7 @@ function AuthPage() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<"signin" | "signup">(search.mode === "signup" ? "signup" : "signin");
   const [form, setForm] = useState({ fullName: "", studentId: "", email: "", password: "" });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Errs>({});
   const [loading, setLoading] = useState(false);
   const [sentTo, setSentTo] = useState<string | null>(null);
 
@@ -128,7 +128,7 @@ function AuthPage() {
   );
 }
 
-function Field({ id, label, error, ...props }: { id: string; label: string; error?: string } & React.InputHTMLAttributes<HTMLInputElement>) {
+function Field({ id, label, error, ...props }: { id: string; label: string; error?: string | undefined } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div className="space-y-1.5">
       <Label htmlFor={id}>{label}</Label>
@@ -137,3 +137,5 @@ function Field({ id, label, error, ...props }: { id: string; label: string; erro
     </div>
   );
 }
+
+type Errs = { fullName?: string; studentId?: string; email?: string; password?: string };
