@@ -158,7 +158,7 @@ function ElectionDialog({ initial, onClose, onSaved }: { initial: Partial<Electi
       ? await supabase.from("elections").update(row).eq("id", initial.id)
       : await supabase.from("elections").insert(row);
     setSaving(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(initial.id ? "Election updated" : "Election created as draft");
     onSaved(); onClose();
   }
@@ -204,7 +204,7 @@ function CandidatesDialog({ election, onClose }: { election: Election; onClose: 
     if (!p.success) { setErr(Object.fromEntries(p.error.issues.map((i) => [String(i.path[0]), i.message]))); return; }
     setErr({});
     const { error } = await supabase.from("candidates").insert({ ...p.data, photo_url: p.data.photo_url || null, position: election.position, election_id: election.id });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Candidate added");
     setF({ full_name: "", department: "", manifesto: "", photo_url: "" });
     qc.invalidateQueries({ queryKey: key });
@@ -290,7 +290,7 @@ function StudentsAdmin() {
 function Stat({ label, value }: { label: string; value: number }) {
   return <div className="rounded-2xl border bg-card p-5 shadow-card"><p className="text-xs text-muted-foreground">{label}</p><p className="mt-1 font-display text-3xl font-bold text-primary">{value}</p></div>;
 }
-function F({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+function F({ label, error, children }: { label: string; error?: string | undefined; children: React.ReactNode }) {
   return <div className="space-y-1.5"><Label>{label}</Label>{children}{error && <p className="text-xs text-destructive">{error}</p>}</div>;
 }
 
