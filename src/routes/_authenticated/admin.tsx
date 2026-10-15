@@ -146,7 +146,7 @@ function ElectionDialog({ initial, onClose, onSaved }: { initial: Partial<Electi
     start_at: initial.start_at ? toLocalInput(initial.start_at) : "",
     end_at: initial.end_at ? toLocalInput(initial.end_at) : "",
   });
-  const [err, setErr] = useState<Record<string, string>>({});
+  const [err, setErr] = useState<Errs>({});
   const [saving, setSaving] = useState(false);
 
   async function save() {
@@ -197,7 +197,7 @@ function CandidatesDialog({ election, onClose }: { election: Election; onClose: 
     queryFn: async () => (await supabase.from("candidates").select("*").eq("election_id", election.id).order("full_name")).data ?? [],
   });
   const [f, setF] = useState({ full_name: "", department: "", manifesto: "", photo_url: "" });
-  const [err, setErr] = useState<Record<string, string>>({});
+  const [err, setErr] = useState<Errs>({});
 
   async function add() {
     const p = candidateSchema.safeParse(f);
@@ -293,3 +293,5 @@ function Stat({ label, value }: { label: string; value: number }) {
 function F({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return <div className="space-y-1.5"><Label>{label}</Label>{children}{error && <p className="text-xs text-destructive">{error}</p>}</div>;
 }
+
+type Errs = { [K in "title" | "position" | "description" | "start_at" | "end_at" | "full_name" | "department" | "manifesto" | "photo_url"]?: string };

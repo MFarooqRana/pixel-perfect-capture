@@ -47,7 +47,7 @@ export function CandidateAvatar({ name, photo, size = "md" }: { name: string; ph
   );
 }
 
-export function EmptyState({ title, description, children }: { title: string; description?: string; children?: React.ReactNode }) {
+export function EmptyState({ title, description, children }: { title: string; description?: string | undefined; children?: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-dashed bg-muted/50 p-10 text-center">
       <h3 className="text-lg font-semibold">{title}</h3>
